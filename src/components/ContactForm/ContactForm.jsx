@@ -1,10 +1,18 @@
 import React, { useState } from 'react';
 import { Form } from './ContactForm.styled';
-import PropTypes from 'prop-types';
+import { nanoid } from 'nanoid';
+import { useDispatch, useSelector } from 'react-redux';
+import { contactAdd } from 'redux/contactsSlice';
 
-const ContactForm = ({ nameList, onSubmit }) => {
+const ContactForm = () => {
+  const dispatch = useDispatch();
+
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
+
+  const nameList = useSelector(state => state.contacts.items).map(
+    item => item.name
+  );
 
   const clearForm = () => {
     setName('');
@@ -31,7 +39,7 @@ const ContactForm = ({ nameList, onSubmit }) => {
     ).length;
 
     if (successCondition) {
-      onSubmit({ contact: { name, number } });
+      dispatch(contactAdd({ id: nanoid(), name, number }));
       clearForm();
       // form clears only on success
     } else {
@@ -68,11 +76,6 @@ const ContactForm = ({ nameList, onSubmit }) => {
       <button type="submit">Add contact</button>
     </Form>
   );
-};
-
-ContactForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
-  nameList: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default ContactForm;
