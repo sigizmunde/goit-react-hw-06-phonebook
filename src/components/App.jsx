@@ -3,46 +3,30 @@ import ContactForm from './ContactForm/ContactForm';
 import ContactList from './ContactList/ContactList';
 import Filter from './Filter/Filter';
 import { VertFlexSection, OneLine } from './App.styled';
-import { nanoid } from 'nanoid';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { contactRemove, filterSet } from 'redux/contactsSlice';
 
 export const App = () => {
-  const [contacts, setContacts] = useState(
-    JSON.parse(localStorage.getItem('contacts')) || [
-      { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-      { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-      { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-      { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-    ]
-  );
-  const [filter, setFilter] = useState('');
+  const dispatch = useDispatch();
+
+  const contacts = useSelector(store => store.contacts.items);
+  const filter = useSelector(store => store.contacts.filter);
 
   useEffect(() => {
     localStorage.setItem('contacts', JSON.stringify(contacts));
   }, [contacts]);
 
-  const handleContactFormSubmit = ({ contact }) => {
-    const { name, number } = contact;
-
-    setContacts(contacts => {
-      return [...contacts, { id: nanoid(), name, number }];
-    });
-  };
-
   const filterContacts = () =>
     contacts.filter(c => c.name.toLowerCase().includes(filter));
 
   const handleFilterChange = e => {
-    setFilter(e.target.value.toLowerCase());
+    dispatch(filterSet(e.target.value.toLowerCase()));
   };
 
   const deleteContact = id => {
-    const filtered = contacts.filter(c => c.id !== id);
-    setContacts(filtered);
+    dispatch(contactRemove({ id }));
   };
-
-  console.log(contacts);
-  const nameList = contacts.map(({ name }) => name);
 
   return (
     <div
@@ -60,7 +44,7 @@ export const App = () => {
         <OneLine>
           <h2>Phonebook</h2>
         </OneLine>
-        <ContactForm onSubmit={handleContactFormSubmit} nameList={nameList} />
+        <ContactForm />
         <h3>Contacts</h3>
         <Filter onChange={handleFilterChange} />
         <ContactList contacts={filterContacts()} onDelete={deleteContact} />
