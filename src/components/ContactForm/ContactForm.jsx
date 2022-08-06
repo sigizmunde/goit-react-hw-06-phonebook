@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Form } from './ContactForm.styled';
 import { nanoid } from 'nanoid';
 import { useDispatch, useSelector } from 'react-redux';
-import { contactAdd } from 'redux/contactsSlice';
+import { contactAdd, getContacts } from 'redux/contactsSlice';
 
 const ContactForm = () => {
   const dispatch = useDispatch();
@@ -10,9 +10,7 @@ const ContactForm = () => {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
-  const nameList = useSelector(state => state.contacts.items).map(
-    item => item.name
-  );
+  const nameList = useSelector(getContacts).map(item => item.name);
 
   const clearForm = () => {
     setName('');

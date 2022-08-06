@@ -3,19 +3,18 @@ import ContactForm from './ContactForm/ContactForm';
 import ContactList from './ContactList/ContactList';
 import Filter from './Filter/Filter';
 import { VertFlexSection, OneLine } from './App.styled';
-import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { contactRemove, filterSet } from 'redux/contactsSlice';
+import {
+  contactRemove,
+  filterSet,
+  getContacts,
+  getFilter,
+} from 'redux/contactsSlice';
 
 export const App = () => {
   const dispatch = useDispatch();
-
-  const contacts = useSelector(store => store.contacts.items);
-  const filter = useSelector(store => store.contacts.filter);
-
-  useEffect(() => {
-    localStorage.setItem('contacts', JSON.stringify(contacts));
-  }, [contacts]);
+  const contacts = useSelector(getContacts);
+  const filter = useSelector(getFilter);
 
   const filterContacts = () =>
     contacts.filter(c => c.name.toLowerCase().includes(filter));

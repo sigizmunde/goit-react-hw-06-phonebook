@@ -1,4 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web
 
 const initialItems = [
   { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
@@ -25,4 +27,17 @@ const contactsSlice = createSlice({
 
 export const { contactAdd, contactRemove, filterSet } = contactsSlice.actions;
 
-export default contactsSlice.reducer;
+const persistConfig = {
+  key: 'contacts',
+  storage,
+  whitelist: ['items'],
+};
+
+export const persistedReducer = persistReducer(
+  persistConfig,
+  contactsSlice.reducer
+);
+
+// Selectors
+export const getContacts = store => store.contacts.items;
+export const getFilter = store => store.contacts.filter;
